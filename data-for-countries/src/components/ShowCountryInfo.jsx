@@ -17,7 +17,7 @@ const ShowCountryInfo = ({countriesFound, setCountriesFound, country, countryDet
   // Renders list of countries with a button to show each country's details
   const printListOfCountries = () => {
     return countriesFound.map((country, index) => (
-      <div key={index}>
+      <div key={index} className="country-item">
         <p>{country} <button onClick={() => setCountriesFound([country])}>show</button></p>
       </div>
     ))
@@ -27,41 +27,57 @@ const ShowCountryInfo = ({countriesFound, setCountriesFound, country, countryDet
   const showSpecificCountryDetails = () => {
     if (!countryDetails) return null; // Guard clause for null countryDetails
     return (
-      <div>
+      <div className="country-details">
+
         <h1>{countryDetails.name.common}</h1>
-        capital: {countryDetails.capital[0]}
-        <br></br>
-        population: {countryDetails.population.toLocaleString('en-US')}
-        <br></br>
-        area: {countryDetails.area.toLocaleString('en-US')} km²
-        <br></br>
-        <h2>Languages:</h2>
-        <ul>
-          {Object.values(countryDetails.languages).map((language, index) => (
-            <li key={index}>{language}</li>
-          ))}
-        </ul>
 
-        <img src={countryDetails.flags.png} alt="country flag" />
+        <div className="country-info">
+          capital: {countryDetails.capital[0]}
+          <br></br>
+          population: {countryDetails.population.toLocaleString('en-US')}
+          <br></br>
+          area: {countryDetails.area.toLocaleString('en-US')} km²
+          <br></br>
+        </div>
 
-        <h2>In {countryDetails.capital[0]}</h2>
-        <Weather 
-          countryDetails={countryDetails}
-          countryName={countryDetails.name.common} 
-          capital={countryDetails.capital[0]}
-        />
+        <div className="languages">
+          <h2>Languages:</h2>
+          <ul>
+            {Object.values(countryDetails.languages).map((language, index) => (
+              <li key={index}>{language}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="flag">
+          <img src={countryDetails.flags.png} alt="country flag" />
+        </div>
+
+        <div className="weather">
+          <h2>In {countryDetails.capital[0]}</h2>
+          <Weather 
+            countryDetails={countryDetails}
+            countryName={countryDetails.name.common} 
+            capital={countryDetails.capital[0]}
+          />
+        </div>
+
       </div>
     )
   }
 
   // Determines render based on the number of countries found
-  if (countriesFound.length > 10) {
-    return "Too many countries"; // Return message for large result sets
-  } else if (countriesFound.length <= 10 && countriesFound.length > 1) {
-    return printListOfCountries(); // Render list of countries
-  } else if (countriesFound.length === 1) {
-    return showSpecificCountryDetails(); // Render specific country details
-  }
+  return (
+    <>
+      {countriesFound.length > 0 && (  // Only render if countriesFound is not empty
+        <div className="country-container">
+          {countriesFound.length > 10 && <p>Too many matches, please specify another filter</p>}
+          {countriesFound.length <= 10 && countriesFound.length > 1 && printListOfCountries()}
+          {countriesFound.length === 1 && showSpecificCountryDetails()}
+        </div>
+      )}
+    </>
+  );
 };
 
 export default ShowCountryInfo;
